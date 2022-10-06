@@ -5,6 +5,7 @@ import SmoothieCard from "../components/SmoothieCard";
 const Home = () => {
   const [fetchError, setFetchError] = useState(null);
   const [smoothies, setSmoothies] = useState(null);
+  const [orderBy, setOrderBy] = useState("created_at");
 
   const handleDelete = (id) => {
     setSmoothies((previousSmoothies) => {
@@ -18,7 +19,9 @@ const Home = () => {
         //name of table
         .from("smoothies")
         //all of the models
-        .select();
+        .select()
+        //what order are the models in?
+        .order(orderBy, { ascending: false });
 
       if (error) {
         setFetchError("Could not fetch smoothies");
@@ -31,14 +34,22 @@ const Home = () => {
       }
     };
     fetchSmoothies();
-  }, []);
+    //whenever orderBy changes, rerun this!
+  }, [orderBy]);
 
   return (
     <div className="page home">
       {fetchError && <p>{fetchError}</p>}
       {smoothies && (
         <div className="smoothies">
-          {/* order-by buttons */}
+          <div className="order-by">
+            <p>Order by:</p>
+            <button onClick={() => setOrderBy("created_at")}>
+              Time Created
+            </button>
+            <button onClick={() => setOrderBy("title")}>Title</button>
+            <button onClick={() => setOrderBy("rating")}>Rating</button>
+          </div>
           <div className="smoothie-grid">
             {smoothies.map((smoothie) => (
               <SmoothieCard
